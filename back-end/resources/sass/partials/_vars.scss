@@ -1,0 +1,66 @@
+// Main colors
+$palette: #cad2c5, #84a98c, #52796f, #354f52, #2f3e46;
+// $palette: #f4cae0, #d7b9d5, #ada7c9, #90a8c3, #64a6bd;
+// $palette: #caf0f8, #90e0ef, #00b4d8, #0077b6, #03045e;
+// $palette: #e4b1ab, #e39695, #df7373, #da5552, #cc444b;
+
+$black: #000;
+$white: #fff;
+
+@function palette($col) {
+    @return nth($palette, $col);
+}
+
+// Base font
+$baseFont: 18px 'Josefin Sans';
+
+// Display flex
+@mixin dFlex($type) {
+    display: flex;
+    @if( $type == 'center' ) {
+        justify-content: center;
+        align-items: center;
+    } @else if ( $type == 'center-x' ) {
+        justify-content: center;
+    } @else if ( $type == 'center-y' ) {
+        align-items: center;
+    } @else if ( $type == 'space-btwn' ) {
+        justify-content: space-between;
+    } @else if ( $type == 'left' ) {
+        justify-content: flex-start;
+    } @else if ( $type == 'right' ) {
+        justify-content: flex-end;
+    }
+}
+
+// Margins & paddings
+@for $i from 1 to 7 {
+    .mt-#{$i} {
+        margin-top: $i + rem;
+    }
+    .mb-#{$i} {
+        margin-bottom: $i + rem;
+    }
+    .my-#{$i} {
+        margin-top: $i + rem;
+        margin-bottom: $i + rem;
+    }
+    .mx-#{$i} {
+        margin-right: $i + rem;
+        margin-left: $i + rem;
+    }
+    .pt-#{$i} {
+        padding-top: $i + rem;
+    }
+    .pb-#{$i} {
+        padding-bottom: $i + rem;
+    }
+    .py-#{$i} {
+        padding-top: $i + rem;
+        padding-bottom: $i + rem;
+    }
+    .px-#{$i} {
+        padding-right: $i + rem;
+        padding-left: $i + rem;
+    }
+}

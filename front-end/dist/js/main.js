@@ -1,7 +1,7 @@
 new Vue ({
     el: "#todo",
     data: {
-        // cathegory list
+        // static cathegory list
         cathegoryList: [
             {
                 name: 'Tutti',
@@ -15,28 +15,28 @@ new Vue ({
             },
         ],
 
-        // set empty arrays (for api)
-        allTodos: [],
-        allTodoLists: [],
-        listIndex: '',
-
-        todoListTitle: 'TUTTI',
-
-        // single tood lists
-        singleTodoList: [],
-
-        showList: false,
-
-        // how many todos in list
-        numTodos: 0,
-
-        modifyTodo: false,
-        modifyTodoList: false,
-        deleteList: false,
-
-        checked: false,
+        /*****************
+         * TODO VARS
+        *****************/
         todoIndex: null,
 
+        // for todo counter
+        numTodos: 0,
+
+        // for todo options
+        modifyTodoList: false,
+        modifyTodo: false,
+        deleteList: false,
+        checked: false,
+
+        importanceTxt: '!',
+        isPriority: false,
+        importance: 1,
+        
+        // url
+        todoUrl: "http://127.0.0.1:8000/api/todos/",
+
+        // todo vars for database
         createTodo: {
             todo_list_id: 1,
             content: '',
@@ -46,35 +46,47 @@ new Vue ({
             completed: 0
         },
 
-        // custom todo
-        importance: 1,
-        importanceTxt: '!',
-        isPriority: false,
+        /*****************
+         * TODOLIST VARS
+        *****************/
+        listIndex: '',
 
+        showList: false,
+        // for todos header title 
+        todoListTitle: 'TUTTI',
+
+        // url
+        todoListUrl: "http://127.0.0.1:8000/api/todoLists/",
+
+        // todolist var for database
         createList: {
             name: ''
         },
         
-        // api vars
-        baseUrl: "http://127.0.0.1:8000/api/"
-
+        /**********************
+         * AJAX CALLs
+        **********************/
+        // vars
+        allTodos: [],
+        allTodoLists: [],
+        singleTodoList: []
     },
     created() {
-        this.apiCall(this.baseUrl, "todos", this.allTodos);
+        /**********************
+         * AJAX CALLs
+        **********************/
         this.singleTodoList = [];
-        this.apiCall(this.baseUrl, "todos", this.singleTodoList);
-        this.apiCall(this.baseUrl, "todoLists", this.allTodoLists);
+        this.apiCall(this.todoUrl, this.allTodos);
+        this.apiCall(this.todoUrl, this.singleTodoList);
+        this.apiCall(this.todoListUrl, this.allTodoLists);
     },
     methods: {
-        // ajax call function
-        apiCall(url, type, array) {
-            axios.get(url + type).then(resp => {
-                resp.data.forEach(el => {
-                    if (! array.includes(el)) {
-                        array.push(el);
-                    }
-                });
-            })
+        /**********************
+         * TODO FUNCTIONS
+        **********************/
+        showAllTodos() {
+            this.singleTodoList = [];
+            this.apiCall(this.todoUrl, this.singleTodoList);
         },
         countTodos(id) {
             this.allTodos.forEach(todo => {
@@ -84,6 +96,14 @@ new Vue ({
                 return num;
             });
         },
+        todoCounter(id) {
+            let counter = 0;
+            this.allTodos.forEach( todo => {
+              (todo.todo_list_id === id) ? counter ++ : '';
+            });
+            return counter
+        },
+        // todo options
         setImportance() {
             this.createTodo.importance = '!'
             if (this.importance < 4) {
@@ -110,10 +130,33 @@ new Vue ({
                     break;
             }
         },
+        importanceValues(el) {
+            if (el.length > 1) {
+                if (el == '!!') {
+                    return 'alert'
+                } else {
+                    return 'important'
+                }
+            }
+        },
         setPriority() {
             this.isPriority = !this.isPriority
             this.isPriority ? this.createTodo.priority = 1 : 0
         },
+        showPriorityTodos() {
+            this.singleTodoList = [];
+            axios.get(this.todoUrl).then(resp => {
+                resp.data.forEach(el => {
+                    if (el.priority == 1) {
+                        this.singleTodoList.push(el);
+                    }
+                });
+            })
+        },
+
+        /**********************
+         * TODOLIST FUNCTIONS
+        **********************/
         cathegoryListFunc(el ,condition) {
             this.todoListTitle = el.name;
 
@@ -124,20 +167,6 @@ new Vue ({
             } else {
                 console.log('con scadenza');
             }
-        },
-        showAllTodos() {
-            this.singleTodoList = [];
-            this.apiCall(this.baseUrl, "todos", this.singleTodoList);
-        },
-        showPriorityTodos() {
-            this.singleTodoList = [];
-            axios.get(this.baseUrl + "todos").then(resp => {
-                resp.data.forEach(el => {
-                    if (el.priority == 1) {
-                        this.singleTodoList.push(el);
-                    }
-                });
-            })
         },
         setTodoListIndex(todoList, id) {
             this.todoListTitle = todoList.name;
@@ -152,52 +181,82 @@ new Vue ({
             });
             this.createTodo.todo_list_id = id;
         },
-        todoCounter(id) {
-            let counter = 0;
-            this.allTodos.forEach( todo => {
-              (todo.todo_list_id === id) ? counter ++ : '';
-            });
-            return counter
+        managelist() {
+            this.deleteList = !this.deleteList;
+            this.modifyTodoList = ! this.modifyTodoList;
         },
+
+        /**********************
+         * AJAX CALLs
+        **********************/
+        // generic call    
+        apiCall(url, array) {
+            axios.get(url).then(resp => {
+                resp.data.forEach(el => {
+                    if (! array.includes(el)) {
+                        array.push(el);
+                    }
+                });
+            })
+        },
+        // CRUD METHODS
+
+        // todos
         createTodoItem() {
-            axios.post('http://127.0.0.1:8000/api/todos', this.createTodo);
+            axios.post(this.todoUrl, this.createTodo);
+            // set default to-do
             this.createTodo.todo_list_id = this.listIndex;
             this.createTodo.importance = '!';
             this.createTodo.priority = 0;
             this.createTodo.content = '';
             this.createTodo.completed = 0
-            window.location.reload(true);
-        },
-        deleteTodoItem(id) {
-            axios.delete('http://127.0.0.1:8000/api/todos/' + id);
-            window.location.reload(true);
-        },
-        createTodoList() {
-            axios.post('http://127.0.0.1:8000/api/todoLists', this.createList);
-            window.location.reload(true);
-        },
-        deleteTodoList(id) {
-            axios.delete('http://127.0.0.1:8000/api/todoLists/' + id);
-            window.location.reload(true);
+
+            this.pageReload();
         },
         updateTodo(todoItem, id) {
+
             this.modifyTodo = false;
-            axios.put('http://127.0.0.1:8000/api/todos/' + id, todoItem);
-            window.location.reload(true);
+
+            axios.put(this.todoUrl + id, todoItem);
+            this.pageReload();
+        },
+        deleteTodoItem(id) {
+
+            axios.delete(this.todoUrl + id);
+            this.pageReload();
+        },
+        todoDone(todoItem, id) {
+
+            todoItem.completed === 0 
+                ? todoItem.completed = 1 
+                : todoItem.completed = 0;
+         
+            axios.put(this.todoUrl + id, todoItem);
+            this.pageReload();
+        },
+
+        // todo lists
+        createTodoList() {
+
+            axios.post(this.todoListUrl, this.createList);
+            this.pageReload();
         },
         updateTodoList(todoList, id) {
+
             this.modifyTodoList = false;
-            axios.put('http://127.0.0.1:8000/api/todoLists/' + id, todoList);
-            window.location.reload(true);
+
+            axios.put(this.todoListUrl + id, todoList);
+            this.pageReload();
         },
-        importanceValues(el) {
-            if (el.length > 1) {
-                if (el == '!!') {
-                    return 'alert'
-                } else {
-                    return 'important'
-                }
-            }
+        deleteTodoList(id) {
+
+            axios.delete(this.todoListUrl + id);
+            this.pageReload();
+        },
+
+        // UTILITIES
+        pageReload() {
+            setInterval(() =>  window.location.reload(true), 250);
         },
         ifMobile() {
             // mettere la media screen match
@@ -208,16 +267,5 @@ new Vue ({
                 return this.showList == true;
             }
         },
-        managelist() {
-            this.deleteList = !this.deleteList;
-            this.modifyTodoList = ! this.modifyTodoList;
-        },
-        todoDone(todoItem, id) {
-            todoItem.completed === 0 
-                ? todoItem.completed = 1 
-                : todoItem.completed = 0;                
-            axios.put('http://127.0.0.1:8000/api/todos/' + id, todoItem);
-            window.location.reload(true);
-        }
     }
 })

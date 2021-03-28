@@ -1,0 +1,277 @@
+// todo container
+.todos-container {
+    @include dFlex('');
+    height: 100%;
+    flex-direction: column;
+    padding: 20px;
+    flex-grow: 1;
+    .todos-header {
+        @include dFlex('center');
+        position: relative;
+        height: 150px;
+        font-size: 2rem;
+        &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            bottom: 0;
+            left: 0;
+            background: rgba(palette(1), .35);
+            border-radius: 10px;
+        }
+    }
+    .hamburger-menu {
+        display: none;
+        span {
+            display: block;
+            width: 30px;
+            height: 5px;
+            background: palette(1);
+            border-radius: 20px;
+            &:last-child {
+                margin-top: 10px;
+            }
+        }
+    }
+}
+
+// all todos
+.todos-body {
+    position: relative; 
+    height: 100%;
+    padding: 20px;
+    overflow-y: scroll;
+    .create-todo {
+        display: flex;
+        .add-todo {
+            width: 100%;
+            color: palette(1);
+            flex-grow: 1;
+            font-size: 1.5rem;
+            &::placeholder {
+                color: rgba(palette(1), .4);
+                transition: color 200ms linear;
+            }
+            &:hover {
+                &::placeholder {
+                    color: rgba(palette(1), .9);
+                }
+            }
+        }
+        .other-options {
+            display: flex;
+            width: auto;
+            flex-grow: 1;
+            .importance {
+                margin-right: 5px;
+            }
+        }
+        .importance,
+        .priority,
+        .deadline {
+            cursor: pointer;
+        }
+        .priority {
+            svg {
+                fill: rgba(palette(1), .25);
+            }
+            &.active {
+                svg {
+                    fill: palette(2);
+                }
+            }
+        }
+    }
+    .todo-item {
+        @include dFlex('space-btwn');
+        position: relative;
+        padding: 10px 0 5px;
+        margin: 10px 0 5px 0;
+        font-size: 1.8rem;
+        border-bottom: 2px solid rgba(palette(1), .3);
+        .complete {
+            display: inline-block;
+            position: relative;
+            width: 15px;
+            height: 15px;
+            top: 2px;
+            border: solid palette(1) 3px;
+            border-radius: 5px;
+            cursor: pointer;
+            &.active {
+                &::after {
+                    content: "";
+                    position: absolute;
+                    width: 25px;
+                    height: 4px;
+                    left: -8px;
+                    bottom: 3px;
+                    background: palette(2);
+                    transform: rotate(45deg);
+                    border-radius: 10px;
+                }
+            }
+        }
+        .todo-text {
+            width: 100%;
+        }
+        .todo-info {
+            display: flex;
+            position: absolute;
+            width: 100%;
+            bottom: -50%;
+            left: 0;
+            justify-content: space-between;
+            font-size: 1rem;
+        }
+        .importance-info {
+            display: flex;
+            align-items: center;
+        }
+        .created-at,
+        .importance,
+        .priority {
+            width: 100%;
+            color: rgba(palette(1), .6);
+            padding-right: 10px;
+        }
+        .importance {
+            margin-right: 5px;
+            &.alert {
+                color: palette(3);
+            }
+            &.important {
+                color: palette(1);
+            }
+        }
+        .todo-element {
+            width: 85%;
+            color: palette(1);
+            font-size: 1rem;
+            &:focus {
+                border: 3px solid rgba(palette(2), .3);
+            }
+        }
+        .priority {
+            svg {
+                fill: palette(2);
+            }
+        }
+        .delete-todo {
+            display: flex;
+            align-items: center;
+            margin-right: 0;
+            opacity: 0;
+            cursor: not-allowed;
+            transition: all 250ms ease;
+            svg {
+                fill: palette(2);
+            }
+        }
+        &:hover {
+            .delete-todo {
+                margin-right: 15px;
+                opacity: 1;
+                cursor: pointer;
+            }
+        }
+    }
+}
+
+.todos {
+    width: 100%;
+    .default-list {
+        @include dFlex('space-btwn');
+        position: relative;
+        width: 100%;
+        align-items: center;
+        padding: 30px 20px 20px;
+        cursor: pointer;
+        &::after {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 5px;
+            bottom: 0;
+            left: 0;
+            background: rgba(palette(1), .35);
+            border-radius: 10px;
+        }
+    }
+    .list-name {
+        @include dFlex('');
+        i {
+            margin-right: 15px;
+            font-size: 1.5rem;
+        }
+        h3 {
+            align-self: flex-end;
+            font-size: 1.3rem;
+        }
+    }
+    .item-count {
+        font-size: 1.5rem;
+    }
+}
+
+// vue animation for transition
+.slide-enter-active {
+    transition: all 250ms ease;
+}
+.slide-leave-active {
+    transition: all 300ms cubic-bezier(1.0, 0.5, 0.8, 1.0);
+}
+.slide-enter, 
+.slide-leave-to {
+    transform: translateX(-100px) scale(.85);
+    opacity: 0;
+}
+
+@media screen and (max-width: 768px) {
+    .todos-body {
+        .todo-item {
+            .delete-todo {
+                opacity: 1;
+                transform: translate(0);
+                &:hover {
+                    transform: translate(0);
+                }
+            }
+        }
+    }
+}
+
+// query for mobiles
+@media screen and (max-width: 768px) {
+
+    .todos-container {
+        position: absolute;
+        width: 100%;
+        background: palette(4);
+        .todos-header {
+            width: 100%;
+            justify-content: space-between;
+            padding: 0 25px;
+            .hamburger-menu {
+                display: block;
+                position: relative;
+                z-index: 5;
+                cursor: pointer;
+            }
+        }
+        .other-options {
+            display: flex;
+            flex-grow: 1;
+            .priority {
+                svg {
+                    height: 25px;
+                }
+            }
+            .importance {
+                margin-right: 10px;
+                font-size: 2rem;
+            }
+        }
+    }
+}

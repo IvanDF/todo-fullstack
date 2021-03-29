@@ -5,11 +5,9 @@
 
 cd back-end/ && cp -R .env.example .env // connect to local db
 
-php artisan key:generate
+composer install && php artisan key:generate
 
-composer install && php artisan migrate:fresh --seed
-
-php artisan serve
+php artisan migrate:fresh --seed && php artisan serve
 
 // for mac 
 cd front-end && open ./index.html
@@ -20,4 +18,4 @@ cd front-end && firefox index.html
 
 ```
 
-<img align='center' src="./readme/review.gif" width="1250">
+<img align='center' src="./readme/review.gif" width="100%">

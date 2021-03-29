@@ -265,7 +265,7 @@ new Vue ({
 
         // UTILITIES
         pageReload() {
-            setInterval(() =>  window.location.reload(true), 250);
+            setInterval(() =>  window.location.reload(true), 550);
         },
         ifMobile() {
             // mettere la media screen match

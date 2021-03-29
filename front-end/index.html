@@ -30,13 +30,12 @@
                 <!-- todo lists -->
                 <ul class="todo-lists list-none mt-1">
                     <!-- get all todo lists  -->
-                    <li class="todo-list-item" v-for="(todoList, index) in allTodoLists" @click="showList = !showList">
+                    <li class="todo-list-item" v-for="(todoList, index) in allTodoLists" @click="setTodoListIndex(todoList, todoList.id)">
                         <!-- todo list var -->
                         <input class="todo-list" 
-                            type="text" 
-                            :disabled="!modifyTodoList" 
-                            v-model="todoList.name" 
-                            @click="setTodoListIndex(todoList, todoList.id)" 
+                            type="text"
+                            :disabled="!modifyTodoList"
+                            v-model="todoList.name"
                             @keyup.enter="updateTodoList(todoList, todoList.id)"
                         >
                         <!-- set todolist id to show relative todos -->
@@ -62,7 +61,11 @@
                     </li>
                 </ul>
                 <!-- manage lists -->
-                <div class="manage-lists" @clicK="managelist">Gestisi liste</div>
+                
+                <div class="manage-lists txt-center" @clicK="managelist">
+                    <p class="mb-1" v-if="this.modifyTodoList">Svuota la lista prima di eliminarla</p>
+                    Gestisi liste
+                </div>
             </aside>
         </transition>
         <div class="todos-container">

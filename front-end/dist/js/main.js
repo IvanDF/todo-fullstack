@@ -157,21 +157,27 @@ new Vue ({
         /**********************
          * TODOLIST FUNCTIONS
         **********************/
-        cathegoryListFunc(el ,condition) {
+        cathegoryListFunc(el ,clicked) {
             this.todoListTitle = el.name;
 
-            if (condition == 'allTodos') {
+            if (clicked == 'allTodos') {
                 this.showAllTodos()
-            } else if (condition == 'PriorityTodos') {
+            } else if (clicked == 'PriorityTodos') {
                 this.showPriorityTodos()
             } else {
                 console.log('con scadenza');
             }
         },
         setTodoListIndex(todoList, id) {
+            // change todo title
             this.todoListTitle = todoList.name;
+            // set todolist index
             this.listIndex = id;
+            // show/hide list (for mobile)
+            this.showList = !this.showList
+            // reset todos
             this.singleTodoList = [];
+
             this.allTodos.forEach(todo => {
                 if (id === todo.todo_list_id) {
                     if (! this.singleTodoList.includes(todo)) {
@@ -179,6 +185,7 @@ new Vue ({
                     }
                 }
             });
+            
             this.createTodo.todo_list_id = id;
         },
         managelist() {
@@ -249,6 +256,8 @@ new Vue ({
             this.pageReload();
         },
         deleteTodoList(id) {
+            
+            this.deleteTodoItem(id);
 
             axios.delete(this.todoListUrl + id);
             this.pageReload();

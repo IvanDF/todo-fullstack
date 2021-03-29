@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use App\TodoList;
+use App\Todo;
 
 class TodoListController extends Controller
 {
@@ -98,6 +99,7 @@ class TodoListController extends Controller
      */
     public function destroy($id)
     {
+
         $todoList = TodoList::find($id);
 
         $todoList->delete();

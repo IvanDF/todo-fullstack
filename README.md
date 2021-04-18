@@ -1,5 +1,5 @@
-# TODO LIST FULL - STACK
-
+# TODO LIST FULL-STACK
+###1 Front-end & Back-end separated
 
 ```code
 
